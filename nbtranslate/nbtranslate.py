@@ -12,6 +12,18 @@ import nbformat
 import polib
 from datetime import datetime
 
+def extract_cells(cells, po):
+    for c in cells:
+        if c.cell_type != 'code':
+            codeblock = False
+            for l in c.source.split('\n'):
+                if l.find('```') == 0:
+                    codeblock = not codeblock
+                elif not codeblock and len(l) > 0:
+                    entry = polib.POEntry(
+                        msgid=l
+                    )
+                    po.append(entry)
 
 def extract_translation(nbfile, potfile):
     po = polib.POFile()
@@ -22,18 +34,11 @@ def extract_translation(nbfile, potfile):
         'Content-Transfer-Encoding': '8bit',
     }
     d = nbformat.read(nbfile, nbformat.NO_CONVERT)
-    for w in d.worksheets:
-        for c in w.cells:
-            if c.cell_type != 'code':
-                codeblock = False
-                for l in c.source.split('\n'):
-                    if l.find('```') == 0:
-                        codeblock = not codeblock
-                    elif not codeblock and len(l) > 0:
-                        entry = polib.POEntry(
-                            msgid=l
-                        )
-                        po.append(entry)
+    try:
+        for w in d.worksheets:
+            extract_cells(w.cells, po)
+    except AttributeError:
+        extract_cells(d.cells, po)
     po.save(potfile)
     return 0
 
