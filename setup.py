@@ -14,6 +14,7 @@ def main():
         packages=['nbtranslate'],
         install_requires=[
             'nbformat',
+            'polib'
         ],
         entry_points={
             'console_scripts': ['nbtranslate = nbtranslate.nbtranslate:main']
