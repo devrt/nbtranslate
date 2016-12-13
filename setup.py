@@ -12,6 +12,9 @@ def main():
         url='http://github.com/devrt/nbtranslate',
         license='BSD',
         packages=['nbtranslate'],
+        install_requires=[
+            'nbformat',
+        ],
         entry_points={
             'console_scripts': ['nbtranslate = nbtranslate.nbtranslate:main']
         }
